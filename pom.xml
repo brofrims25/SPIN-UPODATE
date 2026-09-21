@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>su.nightexpress.excellentcrates</groupId>
+    <artifactId>ExcellentCrates</artifactId>
+    <version>6.6.1</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>nightexpress</id>
+            <url>https://repo.nightexpressdev.com/releases</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>nightexpress-releases</id>
+            <url>https://repo.nightexpressdev.com/releases</url>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+
+        <repository>
+            <id>maven</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <!-- Bumped from 1.21.10 to 1.21.11 to match the exact artifact NightCore 2.16.4 itself
+                 still compiles against (verified in nightcore-spigot's own pom.xml at HEAD).
+                 NOTE: Paper/Spigot have NOT introduced a "26.x"-numbered API artifact yet -- the
+                 last artifact version is still 1.21.11-R0.1-SNAPSHOT, and NightCore's plugin.yml
+                 still declares api-version: 1.21 even though it fully supports 26.1.2/26.2 servers.
+                 UNVERIFIED: not compiled in this environment (no Maven Central access here). -->
+            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>su.nightexpress.nightcore</groupId>
+            <artifactId>main</artifactId>
+            <!-- Bumped from 2.10.0 (Dec 2025, pre-26.x) to 2.16.4, the current release that
+                 NightCore's own Hangar page lists as supporting "1.21.8 - 26.2". This is the
+                 single most important change: it's what will actually surface, at compile time,
+                 any NightCore method/class ExcellentCrates calls that changed between versions.
+                 UNVERIFIED: could not run `mvn compile` here to confirm zero breakage -- you MUST
+                 build this locally and fix whatever errors javac reports, if any. -->
+            <version>2.16.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dmulloy2</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <!-- Left at 5.3.0: I could not confirm a newer release exists. If your server's
+                 ProtocolLib is older than this, that alone can explain the missing hologram
+                 icon -- see NOTES_FOR_TESTING.md. -->
+            <version>5.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.retrooper</groupId>
+            <artifactId>packetevents-spigot</artifactId>
+            <!-- Bumped from 2.10.1 to 2.13.0, the release retrooper/packetevents explicitly
+                 shipped "mainly support for Minecraft 26.2" in (June 2026). 2.12.1 was the
+                 26.1 patch release before it. -->
+            <version>2.13.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory> <!-- (your resources folder location) -->
+                <filtering>true
+                </filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
